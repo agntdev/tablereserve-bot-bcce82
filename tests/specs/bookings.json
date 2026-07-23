@@ -1,0 +1,20 @@
+[
+  {
+    "name": "/bookings",
+    "steps": [
+      {
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": {
+              "text": "Show owner dashboard with upcoming bookings and capacity metrics"
+            }
+          }
+        ],
+        "send": {
+          "text": "/bookings"
+        }
+      }
+    ]
+  }
+]
