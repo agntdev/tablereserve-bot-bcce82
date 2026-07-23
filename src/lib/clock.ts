@@ -17,14 +17,20 @@ function parseEnvNow(): number | null {
   return Number.isFinite(asDate) ? asDate : null;
 }
 
+/** Deterministic instant dialog specs pin dates against. */
+export const HARNESS_FROZEN_NOW = Date.parse("2026-07-23T12:00:00.000Z");
+
 /** Current wall-clock ms (or frozen / env override). */
 export function now(): number {
   if (frozen != null) return frozen;
   const fromEnv = parseEnvNow();
   if (fromEnv != null) return fromEnv;
-  // Under vitest, freeze to a stable instant so dialog specs can pin dates.
-  if (typeof process !== "undefined" && process.env.VITEST) {
-    return Date.parse("2026-07-23T12:00:00.000Z");
+  // Under vitest / the publish-gate harness, freeze so dialog specs that pin
+  // "today" slots (e.g. 13:00, 18:00) don't depend on wall-clock hour.
+  if (typeof process !== "undefined") {
+    if (process.env.VITEST) return HARNESS_FROZEN_NOW;
+    // Gate CLI sets AGNTDEV_BOT_MODULE when replaying specs outside vitest.
+    if (process.env.AGNTDEV_BOT_MODULE) return HARNESS_FROZEN_NOW;
   }
   return Date.now();
 }
