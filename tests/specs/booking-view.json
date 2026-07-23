@@ -1,0 +1,20 @@
+[
+  {
+    "name": "View my booking",
+    "steps": [
+      {
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": {
+              "text": "Show current booking with reschedule/cancel options"
+            }
+          }
+        ],
+        "send": {
+          "callback": "booking:view"
+        }
+      }
+    ]
+  }
+]
