@@ -1,0 +1,112 @@
+[
+  {
+    "name": "Reminder system respects configured offset",
+    "steps": [
+      {
+        "send": { "text": "/settings", "userId": 50, "chatId": 50 },
+        "expect": [{ "method": "sendMessage" }]
+      },
+      {
+        "send": {
+          "callback": "settings:setrem:1",
+          "userId": 50,
+          "chatId": 50
+        },
+        "expect": [
+          {
+            "method": "editMessageText",
+            "payload": {
+              "text": "Reminders will go out 1 hour before each booking."
+            }
+          }
+        ]
+      },
+      {
+        "send": { "text": "/start", "userId": 7, "chatId": 7 },
+        "expect": [{ "method": "sendMessage" }]
+      },
+      {
+        "send": { "callback": "booking:start", "userId": 7, "chatId": 7 },
+        "expect": [{ "method": "editMessageText" }]
+      },
+      {
+        "send": {
+          "callback": "booking:date:2026-07-23",
+          "userId": 7,
+          "chatId": 7
+        },
+        "expect": [{ "method": "editMessageText" }]
+      },
+      {
+        "send": {
+          "callback": "booking:time:13:00",
+          "userId": 7,
+          "chatId": 7
+        },
+        "expect": [{ "method": "editMessageText" }]
+      },
+      {
+        "send": {
+          "callback": "booking:party:2",
+          "userId": 7,
+          "chatId": 7
+        },
+        "expect": [{ "method": "editMessageText" }]
+      },
+      {
+        "send": {
+          "callback": "booking:skip_name",
+          "userId": 7,
+          "chatId": 7
+        },
+        "expect": [{ "method": "editMessageText" }]
+      },
+      {
+        "send": {
+          "callback": "booking:skip_phone",
+          "userId": 7,
+          "chatId": 7
+        },
+        "expect": [{ "method": "editMessageText" }]
+      },
+      {
+        "send": {
+          "callback": "booking:confirm",
+          "userId": 7,
+          "chatId": 7
+        },
+        "expect": [
+          {
+            "method": "editMessageText",
+            "payload": {
+              "text": "You're booked!\n\nRef AAAAAA\n2026-07-23 at 13:00\nParty of 2 · 1× 2-top\n\nSave your reference code — you'll need it if you call us."
+            }
+          }
+        ]
+      },
+      {
+        "send": { "text": "/bookings", "userId": 50, "chatId": 50 },
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": {
+              "text": "Reminder: your table is booked for 13:00 on 2026-07-23.\nParty of 2. Ref AAAAAA. See you soon!"
+            }
+          },
+          {
+            "method": "sendMessage",
+            "payload": {
+              "text": "Reminder sent to guest for 13:00 on 2026-07-23 — ref AAAAAA, party of 2."
+            }
+          },
+          {
+            "method": "sendMessage",
+            "payload": {
+              "text": "Owner dashboard · Thu 23 Jul\n\nToday's capacity\n· Seats free (tightest slot): 34 / 36\n· Tables free (tightest slot): 9 / 10\n· Confirmed today: 1\n\nUpcoming bookings:\n· 2026-07-23 13:00 · party 2 · AAAAAA"
+            }
+          }
+        ]
+      }
+    ]
+  }
+]

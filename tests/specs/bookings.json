@@ -1,19 +1,141 @@
 [
   {
-    "name": "/bookings",
+    "name": "/bookings shows owner dashboard capacity metrics",
     "steps": [
       {
+        "send": { "text": "/bookings" },
         "expect": [
           {
             "method": "sendMessage",
             "payload": {
-              "text": "Show owner dashboard with upcoming bookings and capacity metrics"
+              "text": "Owner dashboard · Thu 23 Jul\n\nToday's capacity\n· Seats free (tightest slot): 36 / 36\n· Tables free (tightest slot): 10 / 10\n· Confirmed today: 0\n\nNo upcoming bookings yet — they'll show up here as guests reserve."
             }
           }
-        ],
+        ]
+      }
+    ]
+  },
+  {
+    "name": "No-show marking updates capacity and dashboard",
+    "steps": [
+      {
+        "send": { "text": "/bookings", "userId": 99, "chatId": 99 },
+        "expect": [{ "method": "sendMessage" }]
+      },
+      {
+        "send": { "text": "/start", "userId": 2, "chatId": 2 },
+        "expect": [{ "method": "sendMessage" }]
+      },
+      {
+        "send": { "callback": "booking:start", "userId": 2, "chatId": 2 },
+        "expect": [{ "method": "editMessageText" }]
+      },
+      {
         "send": {
-          "text": "/bookings"
-        }
+          "callback": "booking:date:2026-07-23",
+          "userId": 2,
+          "chatId": 2
+        },
+        "expect": [{ "method": "editMessageText" }]
+      },
+      {
+        "send": {
+          "callback": "booking:time:18:00",
+          "userId": 2,
+          "chatId": 2
+        },
+        "expect": [{ "method": "editMessageText" }]
+      },
+      {
+        "send": {
+          "callback": "booking:party:6",
+          "userId": 2,
+          "chatId": 2
+        },
+        "expect": [{ "method": "editMessageText" }]
+      },
+      {
+        "send": {
+          "callback": "booking:skip_name",
+          "userId": 2,
+          "chatId": 2
+        },
+        "expect": [{ "method": "editMessageText" }]
+      },
+      {
+        "send": {
+          "callback": "booking:skip_phone",
+          "userId": 2,
+          "chatId": 2
+        },
+        "expect": [{ "method": "editMessageText" }]
+      },
+      {
+        "send": {
+          "callback": "booking:confirm",
+          "userId": 2,
+          "chatId": 2
+        },
+        "expect": [
+          {
+            "method": "editMessageText",
+            "payload": {
+              "text": "You're booked!\n\nRef AAAAAA\n2026-07-23 at 18:00\nParty of 6 · 1× 6-top\n\nSave your reference code — you'll need it if you call us."
+            }
+          }
+        ]
+      },
+      {
+        "send": { "text": "/bookings", "userId": 99, "chatId": 99 },
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": {
+              "text": "Owner dashboard · Thu 23 Jul\n\nToday's capacity\n· Seats free (tightest slot): 30 / 36\n· Tables free (tightest slot): 9 / 10\n· Confirmed today: 1\n\nUpcoming bookings:\n· 2026-07-23 18:00 · party 6 · AAAAAA"
+            }
+          }
+        ]
+      },
+      {
+        "send": {
+          "callback": "owner:detail:AAAAAA",
+          "userId": 99,
+          "chatId": 99
+        },
+        "expect": [
+          {
+            "method": "editMessageText",
+            "payload": {
+              "text": "Booking AAAAAA\n2026-07-23 at 18:00\nParty of 6 · confirmed\nTable: 1× 6-top"
+            }
+          }
+        ]
+      },
+      {
+        "send": {
+          "callback": "owner:noshow:AAAAAA",
+          "userId": 99,
+          "chatId": 99
+        },
+        "expect": [
+          {
+            "method": "editMessageText",
+            "payload": {
+              "text": "Marked AAAAAA as no-show. Those seats are free again for new guests."
+            }
+          }
+        ]
+      },
+      {
+        "send": { "text": "/bookings", "userId": 99, "chatId": 99 },
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": {
+              "text": "Owner dashboard · Thu 23 Jul\n\nToday's capacity\n· Seats free (tightest slot): 36 / 36\n· Tables free (tightest slot): 10 / 10\n· Confirmed today: 0\n\nNo upcoming bookings yet — they'll show up here as guests reserve."
+            }
+          }
+        ]
       }
     ]
   }

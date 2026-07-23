@@ -1,24 +1,38 @@
 import { Composer } from "grammy";
 import type { Ctx } from "../bot.js";
 import { mainMenuKeyboard } from "../toolkit/index.js";
+import { processDueReminders } from "../lib/domain.js";
 
-// The /start handler renders the bot's MAIN MENU — the primary way users operate
-// a button-first bot. A feature adds its own button by calling
-// `registerMainMenuItem(...)` in its own `src/handlers/<slug>.ts`; this handler
-// renders whatever is registered (plus a Help button), so you do NOT edit this
-// file to add a feature. Send ONE message — no placeholder line above the menu.
+// Main menu — features register their buttons via registerMainMenuItem.
 const composer = new Composer<Ctx>();
 
-const WELCOME = "👋 Welcome! Tap a button below to get started.";
+export const WELCOME =
+  "Welcome to TableReserve!\n\n" +
+  "Book a table in a few taps, check your reservation, or manage the restaurant if you're the owner.";
 
 composer.command("start", async (ctx) => {
+  clearBookingDraft(ctx);
+  // Opportunistic reminder sweep (covers Node; Workers also use DO alarms).
+  await processDueReminders({
+    sendMessage: (chatId, text) => ctx.api.sendMessage(chatId, text),
+  }).catch(() => 0);
   await ctx.reply(WELCOME, { reply_markup: mainMenuKeyboard() });
 });
 
-// "Back to menu" — re-render the main menu in place from any sub-view.
 composer.callbackQuery("menu:main", async (ctx) => {
   await ctx.answerCallbackQuery();
+  clearBookingDraft(ctx);
   await ctx.editMessageText(WELCOME, { reply_markup: mainMenuKeyboard() });
 });
+
+function clearBookingDraft(ctx: Ctx): void {
+  ctx.session.step = undefined;
+  ctx.session.bookDate = undefined;
+  ctx.session.bookTime = undefined;
+  ctx.session.bookParty = undefined;
+  ctx.session.bookName = undefined;
+  ctx.session.bookPhone = undefined;
+  ctx.session.rescheduleRef = undefined;
+}
 
 export default composer;

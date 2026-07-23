@@ -8,7 +8,7 @@
           {
             "method": "sendMessage",
             "payload": {
-              "text": "ℹ️ Tap /start to open the menu, then pick what you want from the buttons.\n\nEverything in this bot is reachable by tapping — you don't need to remember any commands."
+              "text": "TableReserve helps you book a restaurant table without the back-and-forth.\n\nGuests: tap Book a table, pick a date and time, and you'll get a reference code.\nOwners: use /bookings for today's capacity and /settings to set hours, tables, and reminders.\n\nTap /start anytime to open the menu."
             }
           }
         ]
@@ -20,7 +20,14 @@
     "steps": [
       {
         "send": { "callback": "menu:help" },
-        "expect": [{ "method": "editMessageText" }]
+        "expect": [
+          {
+            "method": "editMessageText",
+            "payload": {
+              "text": "TableReserve helps you book a restaurant table without the back-and-forth.\n\nGuests: tap Book a table, pick a date and time, and you'll get a reference code.\nOwners: use /bookings for today's capacity and /settings to set hours, tables, and reminders.\n\nTap /start anytime to open the menu."
+            }
+          }
+        ]
       }
     ]
   }

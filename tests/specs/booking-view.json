@@ -1,19 +1,98 @@
 [
   {
-    "name": "View my booking",
+    "name": "View my booking empty state",
     "steps": [
       {
+        "send": { "text": "/start" },
+        "expect": [{ "method": "sendMessage" }]
+      },
+      {
+        "send": { "callback": "booking:view" },
         "expect": [
           {
-            "method": "sendMessage",
+            "method": "editMessageText",
             "payload": {
-              "text": "Show current booking with reschedule/cancel options"
+              "text": "No upcoming booking yet — tap Book a table to reserve one."
             }
           }
-        ],
-        "send": {
-          "callback": "booking:view"
-        }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "View my booking shows active reservation with cancel",
+    "steps": [
+      {
+        "send": { "text": "/start" },
+        "expect": [{ "method": "sendMessage" }]
+      },
+      {
+        "send": { "callback": "booking:start" },
+        "expect": [{ "method": "editMessageText" }]
+      },
+      {
+        "send": { "callback": "booking:date:2026-07-24" },
+        "expect": [{ "method": "editMessageText" }]
+      },
+      {
+        "send": { "callback": "booking:time:19:00" },
+        "expect": [{ "method": "editMessageText" }]
+      },
+      {
+        "send": { "callback": "booking:party:4" },
+        "expect": [{ "method": "editMessageText" }]
+      },
+      {
+        "send": { "callback": "booking:skip_name" },
+        "expect": [{ "method": "editMessageText" }]
+      },
+      {
+        "send": { "callback": "booking:skip_phone" },
+        "expect": [{ "method": "editMessageText" }]
+      },
+      {
+        "send": { "callback": "booking:confirm" },
+        "expect": [
+          {
+            "method": "editMessageText",
+            "payload": {
+              "text": "You're booked!\n\nRef AAAAAA\n2026-07-24 at 19:00\nParty of 4 · 1× 4-top\n\nSave your reference code — you'll need it if you call us."
+            }
+          }
+        ]
+      },
+      {
+        "send": { "callback": "booking:view" },
+        "expect": [
+          {
+            "method": "editMessageText",
+            "payload": {
+              "text": "Your booking:\n\nRef AAAAAA\n2026-07-24 at 19:00\nParty of 4 · 1× 4-top"
+            }
+          }
+        ]
+      },
+      {
+        "send": { "callback": "booking:cancel:AAAAAA" },
+        "expect": [
+          {
+            "method": "editMessageText",
+            "payload": {
+              "text": "Cancel booking AAAAAA on 2026-07-24 at 19:00?"
+            }
+          }
+        ]
+      },
+      {
+        "send": { "callback": "booking:cancel_yes:AAAAAA" },
+        "expect": [
+          {
+            "method": "editMessageText",
+            "payload": {
+              "text": "Cancelled — AAAAAA is free again. Hope to see you another time."
+            }
+          }
+        ]
       }
     ]
   }
