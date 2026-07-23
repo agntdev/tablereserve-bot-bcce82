@@ -1,19 +1,102 @@
 [
   {
-    "name": "/settings",
+    "name": "/settings shows owner configuration",
     "steps": [
       {
+        "send": { "text": "/settings" },
         "expect": [
           {
             "method": "sendMessage",
             "payload": {
-              "text": "Configure opening hours, table inventory, and reminder timing"
+              "text": "Restaurant settings\n\nHours: 11:00–22:00\nSitting: 90 min\nReminders: 2 hours before\n\nTables:\n· 4× 2-top (2 seats)\n· 4× 4-top (4 seats)\n· 2× 6-top (6 seats)\n\nTap a button to change something."
             }
           }
-        ],
-        "send": {
-          "text": "/settings"
-        }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Owner can update reminder timing",
+    "steps": [
+      {
+        "send": { "text": "/settings" },
+        "expect": [{ "method": "sendMessage" }]
+      },
+      {
+        "send": { "callback": "settings:reminder" },
+        "expect": [
+          {
+            "method": "editMessageText",
+            "payload": { "text": "When should guests get a reminder?" }
+          }
+        ]
+      },
+      {
+        "send": { "callback": "settings:setrem:3" },
+        "expect": [
+          {
+            "method": "editMessageText",
+            "payload": {
+              "text": "Reminders will go out 3 hours before each booking."
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Owner can update opening hours via text",
+    "steps": [
+      {
+        "send": { "text": "/settings" },
+        "expect": [{ "method": "sendMessage" }]
+      },
+      {
+        "send": { "callback": "settings:hours" },
+        "expect": [
+          {
+            "method": "editMessageText",
+            "payload": {
+              "text": "Send opening hours as HH:MM-HH:MM (for example 11:00-22:00)."
+            }
+          }
+        ]
+      },
+      {
+        "send": { "text": "12:00-21:00" },
+        "expect": [
+          {
+            "method": "sendMessage",
+            "payload": { "text": "Hours updated to 12:00–21:00." }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Owner can update sitting duration",
+    "steps": [
+      {
+        "send": { "text": "/settings" },
+        "expect": [{ "method": "sendMessage" }]
+      },
+      {
+        "send": { "callback": "settings:duration" },
+        "expect": [
+          {
+            "method": "editMessageText",
+            "payload": { "text": "How long does a sitting last?" }
+          }
+        ]
+      },
+      {
+        "send": { "callback": "settings:setdur:60" },
+        "expect": [
+          {
+            "method": "editMessageText",
+            "payload": { "text": "Sitting duration set to 60 minutes." }
+          }
+        ]
       }
     ]
   }

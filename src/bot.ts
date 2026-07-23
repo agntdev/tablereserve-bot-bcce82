@@ -2,11 +2,17 @@ import { Composer } from "grammy";
 import { createBot, type BotContext, type CreateBotOptions } from "./toolkit/index.js";
 import type { StorageAdapter } from "grammy";
 
-// The per-chat session shape (ephemeral conversation state only). Extend as the
-// bot grows. Durable domain data must NOT live here — use the toolkit's
-// persistent storage (see AGENTS.md).
+// Ephemeral conversation state only. Durable domain data lives in src/lib/store.
 export interface Session {
-  // example: step?: "awaiting_amount";
+  /** Flow step: book:name | book:phone | settings:hours | settings:tables | … */
+  step?: string;
+  bookDate?: string;
+  bookTime?: string;
+  bookParty?: number;
+  bookName?: string;
+  bookPhone?: string;
+  /** When set, confirm updates this booking instead of creating a new one. */
+  rescheduleRef?: string;
 }
 
 export type Ctx = BotContext<Session>;
@@ -43,6 +49,10 @@ export interface BuildBotOptions {
  * build-time manifest because Workers has no filesystem.
  */
 export async function buildBot(token: string, opts: BuildBotOptions = {}) {
+  // Fresh durable memory between harness specs (no-op when Redis-backed).
+  const { resetMemoryStore } = await import("./lib/store.js");
+  await resetMemoryStore();
+
   const bot = createBot<Session>(token, {
     initial: () => ({}),
     storage: opts.storage,

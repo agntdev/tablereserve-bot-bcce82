@@ -1,19 +1,123 @@
 [
   {
-    "name": "Book a table",
+    "name": "Book a table opens the date picker",
     "steps": [
       {
+        "send": { "text": "/start" },
+        "expect": [{ "method": "sendMessage" }]
+      },
+      {
+        "send": { "callback": "booking:start" },
         "expect": [
           {
-            "method": "sendMessage",
+            "method": "editMessageText",
+            "payload": { "text": "Pick a date for your table:" }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "End-to-end booking flow with slot validation",
+    "steps": [
+      {
+        "send": { "text": "/start" },
+        "expect": [{ "method": "sendMessage" }]
+      },
+      {
+        "send": { "callback": "booking:start" },
+        "expect": [
+          {
+            "method": "editMessageText",
+            "payload": { "text": "Pick a date for your table:" }
+          }
+        ]
+      },
+      {
+        "send": { "callback": "booking:date:2026-07-24" },
+        "expect": [
+          {
+            "method": "editMessageText",
             "payload": {
-              "text": "Initiate guided booking flow with calendar and time selection"
+              "text": "Times open on Fri 24 Jul — pick one:"
             }
           }
-        ],
-        "send": {
-          "callback": "booking:start"
-        }
+        ]
+      },
+      {
+        "send": { "callback": "booking:time:18:00" },
+        "expect": [
+          {
+            "method": "editMessageText",
+            "payload": {
+              "text": "Got it — Fri 24 Jul at 18:00.\nHow many people?"
+            }
+          }
+        ]
+      },
+      {
+        "send": { "callback": "booking:party:2" },
+        "expect": [
+          {
+            "method": "editMessageText",
+            "payload": {
+              "text": "Name for the reservation? (optional — tap Skip to continue)"
+            }
+          }
+        ]
+      },
+      {
+        "send": { "callback": "booking:skip_name" },
+        "expect": [
+          {
+            "method": "editMessageText",
+            "payload": {
+              "text": "Phone number? (optional — tap Skip to continue)"
+            }
+          }
+        ]
+      },
+      {
+        "send": { "callback": "booking:skip_phone" },
+        "expect": [
+          {
+            "method": "editMessageText",
+            "payload": {
+              "text": "Here's your booking:\nFri 24 Jul at 18:00\nParty of 2\n\nTap Confirm to lock it in."
+            }
+          }
+        ]
+      },
+      {
+        "send": { "callback": "booking:confirm" },
+        "expect": [
+          {
+            "method": "editMessageText",
+            "payload": {
+              "text": "You're booked!\n\nRef AAAAAA\n2026-07-24 at 18:00\nParty of 2 · 1× 2-top\n\nSave your reference code — you'll need it if you call us."
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Abort cancels the booking draft",
+    "steps": [
+      {
+        "send": { "callback": "booking:start" },
+        "expect": [{ "method": "editMessageText" }]
+      },
+      {
+        "send": { "callback": "booking:abort" },
+        "expect": [
+          {
+            "method": "editMessageText",
+            "payload": {
+              "text": "No problem — booking cancelled. Tap /start when you want to try again."
+            }
+          }
+        ]
       }
     ]
   }
